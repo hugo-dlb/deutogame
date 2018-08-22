@@ -1,9 +1,11 @@
 from .playstyle import PlayStyle
 
-class Player:
+class Account:
 	
 	def __init__(self, username, planets=[], playstyle=None): 
 		self.username = username
+		self.astrophysics = 0
+		self.energy = 0
 		self.planets = planets.copy()
 		if playstyle:
 			self.playstyle = playstyle

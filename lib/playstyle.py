@@ -1,6 +1,8 @@
 class PlayStyle:
 	
-	def __init__(self, name='Default playstyle', position=15, use_satellites=True, maximum_satellites_number_per_planet=500, use_solar_plant=True, use_fusion_reactor=True, position_15_reordering=True, number_of_planets_before_reordering=7): 
+	def __init__(self, name='Default playstyle', position=15, use_satellites=True,
+				 maximum_satellites_number_per_planet=500, use_solar_plant=True, use_fusion_reactor=True,
+				 position_15_reordering=True, number_of_planets_before_reordering=7):
 		self.name = name
 		self.position = position
 		self.use_satellites = use_satellites

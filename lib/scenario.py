@@ -1,34 +1,32 @@
 class Scenario:
 	
-	def __init__(self, name='Default scenario', players=[], day_length=365): 
+	def __init__(self, name='Default scenario', accounts=[], day_length=365):
 		self.name = name
-		self.players = players.copy()
+		self.accounts = accounts.copy()
 		self.day_length = day_length
 		self.started = False
 		self.finished = False
 		self.current_day = 0
 	
 	
-	def add_player(self, player):
-		self.players.append(player)
+	def add_account(self, account):
+		self.accounts.append(account)
 	
 	
 	def run(self):
 		self.started = True
 		self.current_day = 1
-		for player in self.players:
-			self.simulate_one_day(player)
+		for account in self.accounts:
+			self.simulate_one_day(account)
 	
 	
-	def simulate_one_day(self, player):
-		for planet in player.planets:
-			''' todo:
-			planet.add_one_day_of_production
+	def simulate_one_day(self, account):
+		for planet in account.planets:
+			planet.add_one_day_of_production()
+			# todo refactor, use utils, and finish method
 			while planet.can_afford_next_most_efficient_step:
 				planet.do_next_most_efficient_step()
-			'''
-	
 	
 	
 	def __str__(self):
-		return self.name + ', ' + str(len(self.players)) + ' players' + ', ' + str(self.day_length) + ' day(s)'
+		return self.name + ', ' + str(len(self.accounts)) + ' accounts' + ', ' + str(self.day_length) + ' day(s)'

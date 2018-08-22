@@ -1,19 +1,19 @@
 from lib.scenario import Scenario
 from lib.playstyle import PlayStyle
-from lib.player import Player
+from lib.account import Account
 from lib.planet import Planet
 
 SERVER_ECONOMY_SPEED = 3
 SIMULATION_DAY_LENGTH = 365
 
-miz = Player('Miz')
+miz = Account('Miz')
 miz.add_planet(Planet(175, -130, SERVER_ECONOMY_SPEED, 'PM'))
 miz.add_planet(Planet(175, -130, SERVER_ECONOMY_SPEED, 'P1'))
 miz.add_planet(Planet(175, -130, SERVER_ECONOMY_SPEED, 'P2'))
 p15_playstyle = PlayStyle('P15 playstyle', position=11)
 miz.set_playstyle(p15_playstyle)
 
-mizerable = Player('Mizerable')
+mizerable = Account('Mizerable')
 mizerable.add_planet(Planet(175, -130, SERVER_ECONOMY_SPEED, 'PM'))
 mizerable.add_planet(Planet(175, -130, SERVER_ECONOMY_SPEED, 'P1'))
 mizerable.add_planet(Planet(175, -130, SERVER_ECONOMY_SPEED, 'P2'))
