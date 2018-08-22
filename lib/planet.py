@@ -1,6 +1,6 @@
 class Planet:
 	
-	def __init__(self, diameter, temperature, server_speed = 1, name = 'Colony', position = 15, metal = 0, cristal = 0, deuterium = 0):
+	def __init__(self, diameter, temperature, server_speed = 1, name = 'Colony', position = 15, metal = 0, cristal = 0, deuterium = 0, points = 0):
 		self.server_speed = server_speed
 		self.name = name
 		self.diameter = diameter
@@ -9,6 +9,7 @@ class Planet:
 		self.metal = metal
 		self.cristal = cristal
 		self.deuterium = deuterium
+		self.points = points
 	
 	
 	def next_level_cost_by_code(self, mine_code):
