@@ -25,43 +25,43 @@ def next_level_cost(code, level, metalized=False):
 
 def next_level_benefit(planet, code, metalized=False):
 	if code == 'metal':
-		return production(code, planet.metal + 1, planet.temperature, metalized) - production(code, planet.metal + 1, planet.temperature, metalized)
+		return production(planet, code, planet.metal + 1, planet.temperature, metalized) - production(planet, code, planet.metal + 1, planet.temperature, metalized)
 	if code == 'cristal':
-		return production(code, planet.cristal + 1, planet.temperature, metalized) - production(code, planet.cristal + 1, planet.temperature, metalized)
+		return production(planet, code, planet.cristal + 1, planet.temperature, metalized) - production(planet, code, planet.cristal + 1, planet.temperature, metalized)
 	if code == 'deuterium':
-		return production(code, planet.deuterium + 1, planet.temperature, metalized) - production(code, planet.deuterium + 1, planet.temperature, metalized)
+		return production(planet, code, planet.deuterium + 1, planet.temperature, metalized) - production(planet, code, planet.deuterium + 1, planet.temperature, metalized)
 
 
-def next_level_profitability_metalized(self, code):
+def next_level_profitability_metalized(planet, code):
 	if code == 'metal':
-		return round(self.next_level_cost_by_level(code, self.metal, True) / (
-				self.production(code, self.metal + 1, self.temperature, True) - self.production(code, self.metal,
-			self.temperature, True)))
+		return round(next_level_cost_by_level(code, planet.metal, True) / (
+				production(planet, code, planet.metal + 1, planet.temperature, True) - production(planet, code, planet.metal,
+			planet.temperature, True)))
 	if code == 'cristal':
-		return round(self.next_level_cost_by_level(code, self.cristal, True) / (
-				self.production(code, self.cristal + 1, self.temperature, True) - self.production(code, self.cristal,
-			self.temperature, True)))
+		return round(next_level_cost_by_level(code, planet.cristal, True) / (
+				production(planet, code, planet.cristal + 1, planet.temperature, True) - production(planet, code, planet.cristal,
+			planet.temperature, True)))
 	if code == 'deuterium':
-		return round(self.next_level_cost_by_level(code, self.deuterium, True) / (
-				self.production(code, self.deuterium + 1, self.temperature, True) - self.production(code, self.deuterium,
-			self.temperature, True)))
+		return round(next_level_cost_by_level(code, planet.deuterium, True) / (
+				production(planet, code, planet.deuterium + 1, planet.temperature, True) - production(planet, code, planet.deuterium,
+			planet.temperature, True)))
 
 
-def production(self, code, mine_level, temperature, metalized=False):
+def production(planet, code, mine_level, temperature, metalized=False):
 	if metalized:
 		if code == 'metal':
-			return round(30 * mine_level * pow(1.1, mine_level) * self.server_speed)
+			return round(30 * mine_level * pow(1.1, mine_level) * planet.server_speed + 30 * planet.server_speed)
 		if code == 'cristal':
-			return round(20 * mine_level * pow(1.1, mine_level) * self.server_speed * 1.33)
+			return round(20 * mine_level * pow(1.1, mine_level) * planet.server_speed * 1.33 + 15 * planet.server_speed)
 		if code == 'deuterium':
-			return round(((10 * mine_level * pow(1.1, mine_level)) * (-0.004 * temperature + 1.44)) * self.server_speed * 2)
+			return round(((10 * mine_level * pow(1.1, mine_level)) * (-0.004 * temperature + 1.44)) * planet.server_speed * 2)
 	else:
 		if code == 'metal':
-			return round(30 * mine_level * pow(1.1, mine_level + 1) * self.server_speed)
+			return round(30 * mine_level * pow(1.1, mine_level + 1) * planet.server_speed)
 		if code == 'cristal':
-			return round(20 * mine_level * pow(1.1, mine_level) * self.server_speed)
+			return round(20 * mine_level * pow(1.1, mine_level) * planet.server_speed)
 		if code == 'deuterium':
-			return round(((10 * mine_level * pow(1.1, mine_level)) * (-0.004 * temperature + 1.44)) * self.server_speed)
+			return round(((10 * mine_level * pow(1.1, mine_level)) * (-0.004 * temperature + 1.44)) * planet.server_speed)
 
 
 def next_astrophysics_cost(level, metalized=False):

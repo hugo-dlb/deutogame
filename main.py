@@ -21,5 +21,8 @@ regular_playstyle = PlayStyle('Regular playstyle', position=11, position_15_reor
 mizerable.set_playstyle(regular_playstyle)
 
 scenario = Scenario('My scenario', [miz, mizerable], SIMULATION_DAY_LENGTH)
+scenario.simulate_one_day()
 
-print(scenario)
+for account in scenario.accounts:
+	for planet in account.planets:
+		print(planet)

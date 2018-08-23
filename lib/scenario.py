@@ -20,13 +20,25 @@ class Scenario:
 			self.simulate_one_day(account)
 	
 	
-	def simulate_one_day(self, account):
-		for planet in account.planets:
-			planet.add_one_day_of_production()
-			# todo refactor, use utils, and finish method
-			while planet.can_afford_next_most_efficient_step:
-				planet.do_next_most_efficient_step()
+	def simulate_one_day(self):
+		for account in self.accounts:
+			for planet in account.planets:
+				planet.add_one_day_of_production()
+				# todo refactor, use utils, and finish method
+				'''
+				while planet.can_afford_next_most_efficient_step:
+					planet.do_next_most_efficient_step()
+				'''
 	
 	
 	def __str__(self):
 		return self.name + ', ' + str(len(self.accounts)) + ' accounts' + ', ' + str(self.day_length) + ' day(s)'
+	
+	
+	def pretty(self):
+		print('Scenario name: ' + self.name)
+		print('Accounts:')
+		for account in self.accounts:
+			print('- ' + str(account))
+		print('Day length: ' + str(self.day_length))
+		print('Current day: ' + str(self.current_day))
