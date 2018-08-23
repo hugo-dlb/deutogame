@@ -31,6 +31,14 @@ class Scenario:
 				'''
 	
 	
+	def run(self):
+		self.started = True
+		while self.current_day < self.day_length:
+			self.simulate_one_day()
+			self.current_day += 1
+		self.finished = True
+	
+	
 	def __str__(self):
 		return self.name + ', ' + str(len(self.accounts)) + ' accounts' + ', ' + str(self.day_length) + ' day(s)'
 	
