@@ -7,7 +7,7 @@ from .utils import astrophysics_over_mine
 
 class Planet:
 	
-	def __init__(self, diameter, temperature, server_speed=1, name='Colony', position=15, points=0, astrophysics=0, playstyle=None):
+	def __init__(self, diameter, temperature, server_speed=1, name='Colony', position=15, astrophysics=0, account=None):
 		self.server_speed = server_speed
 		self.name = name
 		self.diameter = diameter
@@ -23,33 +23,40 @@ class Planet:
 		self.cristal = 0
 		self.deuterium = 0
 		self.energy = 0
-		self.resources = 0
-		self.points = points
 		self.astrophysics = astrophysics
-		self.playstyle = playstyle
+		self.account = account
 	
 	
 	def add_one_day_of_production(self):
 		metal_production_metalized = production(self, 'metal', self.metal, self.temperature, True)
 		cristal_production_metalized = production(self, 'cristal', self.cristal, self.temperature, True)
 		deuterium_production_metalized = production(self, 'deuterium', self.deuterium, self.temperature, True)
-		self.points += ((metal_production_metalized + cristal_production_metalized + deuterium_production_metalized) / 1000)
+		self.account.resources += ((metal_production_metalized + cristal_production_metalized + deuterium_production_metalized) / 1000)
 	
 	
 	def can_do_next_most_efficient_step(self):
-		return self.get_next_most_efficient_step() is not None
-	
+		step = self.get_next_most_efficient_step()
+		if step == 'astrophysics':
+			return self.account.resources >= next_astrophysics_cost(self.astrophysics, True)
+		elif step == 'metal':
+			return self.account.resources >= next_level_cost('metal', self.metal, True)
+		elif step == 'cristal':
+			return self.account.resources >= next_level_cost('cristal', self.cristal, True)
+		elif step == 'deuterium':
+			return self.account.resources >= next_level_cost('deuterium', self.deuterium, True)
+		else:
+			print('Unknown step: ' + step + ' !')
+			return None
 	
 	def get_next_most_efficient_step(self):
 		if self.energy > 0:
-			step = [self.get_next_most_efficient_step()]
+			step = self.get_next_most_efficient_step()
 		else:
-			step = [self.get_next_most_efficient_energy_step(), self.get_next_most_efficient_step()]
+			step = self.get_next_most_efficient_energy_step()
 		return step
 	
 	
 	def get_next_most_efficient_step(self):
-		# todo verify (returns cristal with everything at 0?)
 		astro_total_cost_metalized = next_astrophysics_cost(self.astrophysics, True)
 		metal_profitability = next_level_profitability_metalized(self, 'metal')
 		cristal_profitability = next_level_profitability_metalized(self, 'cristal')
@@ -75,27 +82,51 @@ class Planet:
 	
 	
 	def get_next_most_efficient_energy_step(self):
-		# todo
 		if self.position == 15:
-			# todo CEF
-			return None
+			return 'fusion_reactor'
 		else:
-			if self.solar_plant < 201:
-				# todo solar plant
-				return None
+			if self.solar_plant < 20:
+				return 'solar_plant'
 			else:
-				# todo satellites
-				return None
+				return 'satellites'
 	
 	
 	def do_next_most_efficient_step(self):
 		step = self.get_next_most_efficient_step()
-	
-	
-	# todo execute the step
+		if step == 'astrophysics':
+			self.account.resources -= round(next_astrophysics_cost(self.astrophysics, True))
+			self.account.points += round(next_astrophysics_cost(self.astrophysics, True) / 1000)
+			if self.account.astrophysics == 0:
+				self.account.astrophysics += 1
+			else:
+				self.account.astrophysics += 2
+		elif step == 'metal':
+			self.account.resources -= round(next_level_cost('metal', self.metal, True))
+			self.account.points += round(next_level_cost('metal', self.metal, True) / 1000)
+			self.metal += 1
+		elif step == 'cristal':
+			self.account.resources -= round(next_level_cost('cristal', self.cristal, True))
+			self.account.points += round(next_level_cost('cristal', self.cristal, True) / 1000)
+			self.cristal += 1
+		elif step == 'deuterium':
+			self.account.resources -= round(next_level_cost('deuterium', self.deuterium, True))
+			self.account.points += round(next_level_cost('deuterium', self.deuterium, True) / 1000)
+			self.deuterium += 1
+		elif step == 'fusion_reactor':
+			self.account.resources -= round(next_level_cost('fusion_reactor', self.fusion_reactor, True))
+			self.account.points += round(next_level_cost('fusion_reactor', self.fusion_reactor, True) / 1000)
+			self.fusion_reactor += 1
+		elif step == 'solar_plant':
+			self.account.resources -= round(next_level_cost('solar_plant', self.solar_plant, True))
+			self.account.points += round(next_level_cost('solar_plant', self.solar_plant, True) / 1000)
+			self.solar_plant += 1
+		elif step == 'satellites':
+			# todo somehow handle satellites
+		else:
+			print('Unknown step: ' + step + ' !')
+			return None
 	
 	
 	def __str__(self):
 		return self.name + ', ' + str(self.diameter) + ' cells, ' + 'position ' + str(self.position) + ', ' + str(
-			self.temperature) + '°, M' + str(self.metal) + ', C' + str(self.cristal) + ', D' + str(self.deuterium) + ', ' + str(
-			self.points) + ' points'
+			self.temperature) + '°, M' + str(self.metal) + ', C' + str(self.cristal) + ', D' + str(self.deuterium)

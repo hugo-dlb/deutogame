@@ -7,9 +7,9 @@ def next_level_cost(code, level, metalized=False):
 		if code == 'deuterium':
 			return round(225 * pow(1.5, level)) + round(75 * pow(1.5, level) * 1.33)
 		if code == 'solar_plant':
-			return round(75 * pow(1.5, level - 1)) + round(30 * pow(1.5, level - 1) * 1.33)
+			return round(75 * pow(1.5, level)) + round(30 * pow(1.5, level) * 1.33)
 		if code == 'fusion_reactor':
-			return round(900 * pow(1.8, level - 1)) + round(360 * pow(1.8, level - 1) * 1.33) + round(180 * pow(1.8, level - 1) * 2)
+			return round(900 * pow(1.8, level)) + round(360 * pow(1.8, level) * 1.33) + round(180 * pow(1.8, level) * 2)
 	else:
 		if code == 'metal':
 			return round((60 * pow(1.5, level))), round((15 * pow(1.5, level))), 0
@@ -18,9 +18,9 @@ def next_level_cost(code, level, metalized=False):
 		if code == 'deuterium':
 			return round(225 * pow(1.5, level)), round(75 * pow(1.5, level)), 0
 		if code == 'solar_plant':
-			return round(75 * pow(1.5, level - 1)), round(30 * pow(1.5, level - 1)), 0
+			return round(75 * pow(1.5, level)), round(30 * pow(1.5, level)), 0
 		if code == 'fusion_reactor':
-			return round(900 * pow(1.8, level - 1)), round(360 * pow(1.8, level - 1)), round(180 * pow(1.8, level - 1))
+			return round(900 * pow(1.8, level)), round(360 * pow(1.8, level)), round(180 * pow(1.8, level))
 
 
 def next_level_benefit(planet, code, metalized=False):
@@ -39,15 +39,15 @@ def next_level_profitability_metalized(planet, code):
 	if code == 'metal':
 		return round(next_level_cost(code, planet.metal, True) / (
 				production(planet, code, planet.metal + 1, planet.temperature, True) - production(planet, code, planet.metal,
-			planet.temperature, True)))
+			planet.temperature, True)), 2)
 	if code == 'cristal':
 		return round(next_level_cost(code, planet.cristal, True) / (
 				production(planet, code, planet.cristal + 1, planet.temperature, True) - production(planet, code, planet.cristal,
-			planet.temperature, True)))
+			planet.temperature, True)), 2)
 	if code == 'deuterium':
 		return round(next_level_cost(code, planet.deuterium, True) / (
 				production(planet, code, planet.deuterium + 1, planet.temperature, True) - production(planet, code, planet.deuterium,
-			planet.temperature, True)))
+			planet.temperature, True)), 2)
 
 
 def production(planet, code, mine_level, temperature, metalized=False):
@@ -72,6 +72,13 @@ def production(planet, code, mine_level, temperature, metalized=False):
 def next_astrophysics_cost(level, metalized=False):
 	a = 4000
 	b = a * 2
+	
+	if level == 0:
+		if metalized:
+			return round(a) + round(b * 1.33) + round(a * 2)
+		else:
+			return round(a), round(b), round(a)
+	
 	for i in range(1, level + 1):
 		a = a * 1.75
 	for i in range(1, level + 2):

@@ -6,6 +6,8 @@ class Account:
 		self.username = username
 		self.astrophysics = 0
 		self.energy = 0
+		self.points = 0
+		self.resources = 0
 		self.planets = planets.copy()
 		if playstyle:
 			self.playstyle = playstyle
@@ -15,10 +17,6 @@ class Account:
 	
 	def add_planet(self, planet):
 		self.planets.append(planet)
-	
-	
-	def set_playstyle(self, playstyle):
-		self.playstyle = playstyle
 	
 	
 	def __str__(self):
