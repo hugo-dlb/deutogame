@@ -7,4 +7,4 @@ Simulating Ogame playstyles on the long term (WIP)
 
 # Usage
 - Check and edit the file `main.py` with you needs
-- run the command `python main.py` (deutogame will compute the simulation and save a html file in the scenarios folder)
+- Run the command `python main.py` (deutogame will compute the simulation and save a html file in the scenarios folder)
