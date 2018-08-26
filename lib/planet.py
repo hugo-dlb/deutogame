@@ -2,6 +2,7 @@ from .utils import *
 from copy import deepcopy
 from math import floor
 
+
 class Planet:
 	
 	def __init__(self, name, diameter, temperature, position, account):
@@ -29,7 +30,8 @@ class Planet:
 	def can_do_next_most_efficient_step(self):
 		step = self.get_next_most_efficient_step()
 		if step == 'astrophysics':
-			return self.account.resources >= round(next_astrophysics_cost(self.account.astrophysics, True) + (10000 + 20000 * 1.33 + 10000 * 2))
+			return self.account.resources >= round(
+				next_astrophysics_cost(self.account.astrophysics, True) + (10000 + 20000 * 1.33 + 10000 * 2))
 		elif step == 'metal':
 			return self.account.resources >= round(next_level_cost('metal', self.metal, True))
 		elif step == 'crystal':
@@ -79,9 +81,10 @@ class Planet:
 			p2_account = deepcopy(self.account)
 			p2.account = p2_account
 			p2.account.plasma += 1
-			production_p1_metalized = production(self, 'metal', self.metal, self.temperature, True) + production(self, 'crystal', self.crystal, self.temperature, True) + production(self, 'deuterium', self.deuterium, self.temperature, True)
-			production_p2_metalized = production(p2, 'metal', p2.metal, p2.temperature, True) + production(p2, 'crystal',
-				p2.crystal, p2.temperature, True) + production(p2, 'deuterium', p2.deuterium, p2.temperature, True)
+			production_p1_metalized = production(self, 'metal', self.metal, self.temperature, True) + production(self, 'crystal',
+				self.crystal, self.temperature, True) + production(self, 'deuterium', self.deuterium, self.temperature, True)
+			production_p2_metalized = production(p2, 'metal', p2.metal, p2.temperature, True) + production(p2, 'crystal', p2.crystal,
+				p2.temperature, True) + production(p2, 'deuterium', p2.deuterium, p2.temperature, True)
 			most_profitable_task_production_gain_per_hour_metalized = production_p2_metalized - production_p1_metalized
 		most_profitable_mine_cost_metalized = next_level_cost(most_profitable_task[0], most_profitable_task[2] + 1, True)
 		average_production_per_planet_per_hour_metalized = get_average_planets_production_per_hour(self.account.planets)
@@ -97,7 +100,7 @@ class Planet:
 	
 	def get_next_most_efficient_energy_task(self):
 		if self.position == 15:
-			if self.solar_plant < 30:
+			if self.solar_plant < 20:
 				return 'solar_plant'
 			else:
 				if energy_over_fusion_reactor(self):
@@ -105,7 +108,7 @@ class Planet:
 				else:
 					return 'fusion_reactor'
 		else:
-			if self.solar_plant < 10:
+			if self.solar_plant < 20:
 				return 'solar_plant'
 			else:
 				return 'satellites'
@@ -116,7 +119,8 @@ class Planet:
 		step = self.get_next_most_efficient_step()
 		if step == 'astrophysics':
 			cost = round(next_astrophysics_cost(self.account.astrophysics, True) + (10000 + 20000 * 1.33 + 10000 * 2))
-			self.account.points += round((next_astrophysics_cost(self.account.astrophysics, True) + (10000 + 20000 * 1.33 + 10000 * 2)) / 1000)
+			self.account.points += round(
+				(next_astrophysics_cost(self.account.astrophysics, True) + (10000 + 20000 * 1.33 + 10000 * 2)) / 1000)
 			if self.account.astrophysics == 0:
 				self.account.astrophysics += 1
 			else:
@@ -153,6 +157,8 @@ class Planet:
 		
 		self.account.resources -= cost
 		self.account.points += round(cost / 1000)
+		if step == 'energy' or step == 'satellites' or step == 'fusion_reactor':
+			self.account.energy_points += round(cost / 1000)
 		self.account.update_energy()
 	
 	
@@ -171,8 +177,9 @@ class Planet:
 	def __str__(self):
 		return self.name + ', ' + str(self.diameter) + ' cells, ' + 'position ' + str(self.position) + ', ' + str(
 			self.temperature) + '°, M' + str(self.metal) + ', C' + str(self.crystal) + ', D' + str(self.deuterium) + ', SP' + str(
-			self.solar_plant) + ', FR' + str(self.fusion_reactor) + ' (energy ' + str(self.account.energy) + '), ' + str(self.satellites) + ' satellites, ' + str(
-			self.energy) + ' energy'
+			self.solar_plant) + ', FR' + str(self.fusion_reactor) + ' (energy ' + str(self.account.energy) + '), ' + str(
+			self.satellites) + ' satellites, ' + str(self.energy) + ' energy'
+	
 	
 	def get_production_string(self):
 		metal_production = production(self, 'metal', self.metal, self.temperature)
@@ -181,4 +188,3 @@ class Planet:
 		print('Metal production per hour: ' + str(metal_production[0]) + 'M')
 		print('Crystal production per hour: ' + str(crystal_production[1]) + 'C')
 		print('Deuterium production per hour: ' + str(deuterium_production[2]) + 'D')
-	

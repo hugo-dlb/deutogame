@@ -1,4 +1,5 @@
-from .utils import  *
+from .utils import *
+
 
 class Account:
 	
@@ -9,9 +10,11 @@ class Account:
 		self.energy = 0
 		self.plasma = 0
 		self.points = 0
+		self.energy_points = 0
 		self.resources = 0
 		self.planets = planets.copy()
 		self.playstyle = playstyle
+		self.days_data = []
 	
 	
 	def __str__(self):
@@ -24,6 +27,29 @@ class Account:
 		for planet in self.planets:
 			planet.update_energy()
 	
+	
+	def get_mine_production(self, code):
+		metal_production = 0
+		crystal_production = 0
+		deuterium_production = 0
+		
+		for planet in self.planets:
+			metal_production += production(planet, 'metal', planet.metal, planet.temperature)
+			crystal_production += production(planet, 'crystal', planet.crystal, planet.temperature)
+			deuterium_production += production(planet, 'deuterium', planet.deuterium, planet.temperature)
+		
+		metal_average_production = round(metal_production / len(self.planets), 2)
+		crystal_average_production = round(crystal_production / len(self.planets), 2)
+		deuterium_average_production = round(deuterium_production / len(self.planets), 2)
+		
+		if code == 'metal':
+			return metal_average_production
+		elif code == 'crystal':
+			return crystal_average_production
+		elif code == 'deuterium':
+			return deuterium_average_production
+		elif code == 'total':
+			return metal_average_production + crystal_average_production * 1.33 + deuterium_average_production * 2
 	
 	def print_total_production(self, metalized=False):
 		metal_production = 0
@@ -40,11 +66,32 @@ class Account:
 		deuterium_average_production = round(deuterium_production / len(self.planets), 2)
 		
 		if metalized:
-			print('Production per hour metalized: ' + str(metal_average_production + crystal_average_production + deuterium_average_production) + 'M')
+			print('Production per hour metalized: ' + '{:,}'.format(round(metal_average_production + crystal_average_production + deuterium_average_production)).replace(',', ' ') + 'M')
 		else:
-			print('Metal production per hour: ' + str(metal_average_production) + 'M')
-			print('Crystal production per hour: ' + str(crystal_average_production) + 'C')
-			print('Deuterium production per hour: ' + str(deuterium_average_production) + 'D')
+			print('Metal production per hour: ' + '{:,}'.format(round(metal_average_production)).replace(',', ' ') + 'M')
+			print('Crystal production per hour: ' + '{:,}'.format(round(crystal_average_production)).replace(',', ' ') + 'C')
+			print('Deuterium production per hour: ' + '{:,}'.format(round(deuterium_average_production)).replace(',', ' ') + 'D')
+	
+	
+	def get_average_level(self, code):
+		code_sum = 0
+		
+		for planet in self.planets:
+			if code == 'metal':
+				code_sum += planet.metal
+			elif code == 'crystal':
+				code_sum += planet.crystal
+			elif code == 'deuterium':
+				code_sum += planet.deuterium
+			elif code == 'solar_plant':
+				code_sum += planet.solar_plant
+			elif code == 'fusion_reactor':
+				code_sum += planet.fusion_reactor
+			elif code == 'satellites':
+				code_sum += planet.satellites
+		
+		code_average = round(code_sum / len(self.planets), 2)
+		return code_average
 	
 	
 	def pretty(self):

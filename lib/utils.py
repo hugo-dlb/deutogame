@@ -70,6 +70,21 @@ def next_level_cost(code, level, metalized=False):
 			return 0, 800 * pow(2, level), 400 * pow(2, level)
 
 
+def level_range_cost(code, level_from, level_to, metalized=False):
+	metal_cost = 0
+	crystal_cost = 0
+	deuterium_cost = 0
+	for i in range(level_from, level_to):
+		a, b, c = next_level_cost(code, i)
+		metal_cost += a
+		crystal_cost += b
+		deuterium_cost += c
+	if metalized:
+		return metal_cost + crystal_cost * 1.33 + deuterium_cost * 2
+	else:
+		return metal_cost, crystal_cost, deuterium_cost
+
+
 def next_level_benefit(planet, code, metalized=False):
 	if code == 'metal':
 		return production(planet, code, planet.metal + 1, planet.temperature, metalized) - production(planet, code, planet.metal + 1,
@@ -205,17 +220,19 @@ def get_fusion_reactor_deuterium_cost_for_level(fusion_reactor_level, server_spe
 
 def energy_over_fusion_reactor(planet):
 	energy_cost = next_level_cost('energy', planet.account.energy, True) / len(planet.account.planets)
-	energy_profit = get_fusion_reactor_energy_for_level(planet.fusion_reactor, planet.account.energy + 1) - get_fusion_reactor_energy_for_level(
-		planet.fusion_reactor, planet.account.energy)
+	energy_profit = get_fusion_reactor_energy_for_level(planet.fusion_reactor,
+		planet.account.energy + 1) - get_fusion_reactor_energy_for_level(planet.fusion_reactor, planet.account.energy)
 	if energy_profit == 0:
 		energy_profit = 1
 	energy_upgrade_ratio = energy_cost / energy_profit
 	
 	fusion_reactor_cost = next_level_cost('fusion_reactor', planet.fusion_reactor, True)
-	fusion_reactor_profit = get_fusion_reactor_energy_for_level(planet.fusion_reactor + 1, planet.account.energy) - get_fusion_reactor_energy_for_level(planet.fusion_reactor, planet.account.energy)
+	fusion_reactor_profit = get_fusion_reactor_energy_for_level(planet.fusion_reactor + 1,
+		planet.account.energy) - get_fusion_reactor_energy_for_level(planet.fusion_reactor, planet.account.energy)
 	fusion_reactor_upgrade_ratio = fusion_reactor_cost / fusion_reactor_profit
 	
 	return energy_upgrade_ratio <= fusion_reactor_upgrade_ratio
+
 
 def get_average_planets_production_per_hour(planets):
 	total_production_metalized = 0
