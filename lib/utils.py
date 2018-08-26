@@ -196,8 +196,7 @@ def get_solar_plant_energy_for_level(solar_plant_level):
 
 
 def get_fusion_reactor_energy_for_level(fusion_reactor_level, energy_level):
-	# todo investigate results to validate formula
-	return 30 * fusion_reactor_level * pow((1.05 + (0.01 * energy_level)), fusion_reactor_level)
+	return 30 * fusion_reactor_level * pow((1.05 + 0.01 * energy_level), fusion_reactor_level)
 
 
 def get_fusion_reactor_deuterium_cost_for_level(fusion_reactor_level, server_speed):

@@ -1,3 +1,5 @@
+from .utils import  *
+
 class Account:
 	
 	def __init__(self, username, server_speed, planets, playstyle):
@@ -16,6 +18,33 @@ class Account:
 		return self.username + ', ' + str(len(self.planets)) + ' planets, ' + str(self.points) + ' points, x' + str(
 			self.server_speed) + ' server speed, astrophysics ' + str(self.astrophysics) + ' plasma ' + str(self.plasma) + ' energy ' + str(
 			self.energy)
+	
+	
+	def update_energy(self):
+		for planet in self.planets:
+			planet.update_energy()
+	
+	
+	def print_total_production(self, metalized=False):
+		metal_production = 0
+		crystal_production = 0
+		deuterium_production = 0
+		
+		for planet in self.planets:
+			metal_production += production(planet, 'metal', planet.metal, planet.temperature, metalized)
+			crystal_production += production(planet, 'crystal', planet.crystal, planet.temperature, metalized)
+			deuterium_production += production(planet, 'deuterium', planet.deuterium, planet.temperature, metalized)
+		
+		metal_average_production = round(metal_production / len(self.planets), 2)
+		crystal_average_production = round(crystal_production / len(self.planets), 2)
+		deuterium_average_production = round(deuterium_production / len(self.planets), 2)
+		
+		if metalized:
+			print('Production per hour metalized: ' + str(metal_average_production + crystal_average_production + deuterium_average_production) + 'M')
+		else:
+			print('Metal production per hour: ' + str(metal_average_production) + 'M')
+			print('Crystal production per hour: ' + str(crystal_average_production) + 'C')
+			print('Deuterium production per hour: ' + str(deuterium_average_production) + 'D')
 	
 	
 	def pretty(self):

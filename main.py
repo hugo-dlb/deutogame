@@ -17,8 +17,9 @@ miz = Account('Miz', SERVER_ECONOMY_SPEED, [], normal_playstyle)
 p2 = Planet('PM', 188, 30, 10, miz)
 miz.planets.append(p2)
 
-scenario = Scenario('My scenario', [miz, mizerable], SIMULATION_DAY_LENGTH)
+scenario = Scenario('My scenario', [mizerable, miz], SIMULATION_DAY_LENGTH)
 scenario.run()
 
 for account in scenario.accounts:
 	account.pretty()
+	account.print_total_production(True)

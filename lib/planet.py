@@ -97,7 +97,7 @@ class Planet:
 	
 	def get_next_most_efficient_energy_task(self):
 		if self.position == 15:
-			if self.solar_plant < 10:
+			if self.solar_plant < 30:
 				return 'solar_plant'
 			else:
 				if energy_over_fusion_reactor(self):
@@ -105,7 +105,7 @@ class Planet:
 				else:
 					return 'fusion_reactor'
 		else:
-			if self.solar_plant < 20:
+			if self.solar_plant < 10:
 				return 'solar_plant'
 			else:
 				return 'satellites'
@@ -115,7 +115,7 @@ class Planet:
 		# todo handle p15 reordering somehow
 		step = self.get_next_most_efficient_step()
 		if step == 'astrophysics':
-			self.account.resources -= round(next_astrophysics_cost(self.account.astrophysics, True) + (10000 + 20000 * 1.33 + 10000 * 2))
+			cost = round(next_astrophysics_cost(self.account.astrophysics, True) + (10000 + 20000 * 1.33 + 10000 * 2))
 			self.account.points += round((next_astrophysics_cost(self.account.astrophysics, True) + (10000 + 20000 * 1.33 + 10000 * 2)) / 1000)
 			if self.account.astrophysics == 0:
 				self.account.astrophysics += 1
@@ -124,46 +124,36 @@ class Planet:
 			temperature = get_planet_temperature_by_position(self.account.playstyle.position)
 			self.account.planets.append(Planet('Colony', 188, temperature, self.account.playstyle.position, self.account))
 		elif step == 'metal':
-			self.account.resources -= round(next_level_cost('metal', self.metal, True))
-			self.account.points += round(next_level_cost('metal', self.metal, True) / 1000)
+			cost = round(next_level_cost('metal', self.metal, True))
 			self.metal += 1
-			self.update_energy()
 		elif step == 'crystal':
-			self.account.resources -= round(next_level_cost('crystal', self.crystal, True))
-			self.account.points += round(next_level_cost('crystal', self.crystal, True) / 1000)
+			cost = round(next_level_cost('crystal', self.crystal, True))
 			self.crystal += 1
-			self.update_energy()
 		elif step == 'deuterium':
-			self.account.resources -= round(next_level_cost('deuterium', self.deuterium, True))
-			self.account.points += round(next_level_cost('deuterium', self.deuterium, True) / 1000)
+			cost = round(next_level_cost('deuterium', self.deuterium, True))
 			self.deuterium += 1
-			self.update_energy()
 		elif step == 'fusion_reactor':
-			self.account.resources -= round(next_level_cost('fusion_reactor', self.fusion_reactor, True))
-			self.account.points += round(next_level_cost('fusion_reactor', self.fusion_reactor, True) / 1000)
+			cost = round(next_level_cost('fusion_reactor', self.fusion_reactor, True))
 			self.fusion_reactor += 1
-			self.update_energy()
 		elif step == 'solar_plant':
-			self.account.resources -= round(next_level_cost('solar_plant', self.solar_plant, True))
-			self.account.points += round(next_level_cost('solar_plant', self.solar_plant, True) / 1000)
+			cost = round(next_level_cost('solar_plant', self.solar_plant, True))
 			self.solar_plant += 1
-			self.update_energy()
 		elif step == 'plasma':
-			self.account.resources -= round(next_level_cost('plasma', self.account.plasma, True))
-			self.account.points += round(next_level_cost('plasma', self.account.plasma, True) / 1000)
+			cost = round(next_level_cost('plasma', self.account.plasma, True))
 			self.account.plasma += 1
 		elif step == 'energy':
-			self.account.resources -= round(next_level_cost('energy', self.account.energy, True))
-			self.account.points += round(next_level_cost('energy', self.account.energy, True) / 1000)
+			cost = round(next_level_cost('energy', self.account.energy, True))
 			self.account.energy += 1
-			self.update_energy()
 		elif step == 'satellites':
-			self.account.resources -= round((2000 * 1.33 + 500 * 2) * 50)
-			self.account.points += round(((2000 * 1.33 + 500 * 2) * 50) / 1000)
+			cost = round((2000 * 1.33 + 500 * 2) * 50)
 			self.satellites += 50
-			self.update_energy()
 		else:
 			print('Unknown step: ' + step + ' !')
+			return
+		
+		self.account.resources -= cost
+		self.account.points += round(cost / 1000)
+		self.account.update_energy()
 	
 	
 	def update_energy(self):
@@ -181,5 +171,14 @@ class Planet:
 	def __str__(self):
 		return self.name + ', ' + str(self.diameter) + ' cells, ' + 'position ' + str(self.position) + ', ' + str(
 			self.temperature) + '°, M' + str(self.metal) + ', C' + str(self.crystal) + ', D' + str(self.deuterium) + ', SP' + str(
-			self.solar_plant) + ', FR' + str(self.fusion_reactor) + ', ' + str(self.satellites) + ' satellites, ' + str(
+			self.solar_plant) + ', FR' + str(self.fusion_reactor) + ' (energy ' + str(self.account.energy) + '), ' + str(self.satellites) + ' satellites, ' + str(
 			self.energy) + ' energy'
+	
+	def get_production_string(self):
+		metal_production = production(self, 'metal', self.metal, self.temperature)
+		crystal_production = production(self, 'crystal', self.crystal, self.temperature)
+		deuterium_production = production(self, 'deuterium', self.deuterium, self.temperature)
+		print('Metal production per hour: ' + str(metal_production[0]) + 'M')
+		print('Crystal production per hour: ' + str(crystal_production[1]) + 'C')
+		print('Deuterium production per hour: ' + str(deuterium_production[2]) + 'D')
+	
