@@ -77,14 +77,14 @@ class Planet:
 			most_profitable_task_production_gain_per_hour_metalized = production(self, most_profitable_task[0], most_profitable_task[2] + 1,
 				self.temperature, True) - production(self, most_profitable_task[0], most_profitable_task[2], self.temperature, True)
 		else:
-			p2 = deepcopy(self)
-			p2_account = deepcopy(self.account)
-			p2.account = p2_account
-			p2.account.plasma += 1
 			production_p1_metalized = production(self, 'metal', self.metal, self.temperature, True) + production(self, 'crystal',
 				self.crystal, self.temperature, True) + production(self, 'deuterium', self.deuterium, self.temperature, True)
-			production_p2_metalized = production(p2, 'metal', p2.metal, p2.temperature, True) + production(p2, 'crystal', p2.crystal,
-				p2.temperature, True) + production(p2, 'deuterium', p2.deuterium, p2.temperature, True)
+			self.account.plasma += 1
+			
+			production_p2_metalized = production(self, 'metal', self.metal, self.temperature, True) + production(self, 'crystal',
+				self.crystal, self.temperature, True) + production(self, 'deuterium', self.deuterium, self.temperature, True)
+			self.account.plasma -= 1
+			
 			most_profitable_task_production_gain_per_hour_metalized = production_p2_metalized - production_p1_metalized
 		most_profitable_mine_cost_metalized = next_level_cost(most_profitable_task[0], most_profitable_task[2] + 1, True)
 		average_production_per_planet_per_hour_metalized = get_average_planets_production_per_hour(self.account.planets)
@@ -107,6 +107,16 @@ class Planet:
 					return 'energy'
 				else:
 					return 'fusion_reactor'
+		elif self.position == 14:
+			if self.solar_plant < 20:
+				return 'solar_plant'
+			elif self.satellites < round(self.account.server_speed * 250):
+				return 'satellites'
+			else:
+				if energy_over_fusion_reactor(self):
+					return 'energy'
+				else:
+					return 'fusion_reactor'
 		else:
 			if self.solar_plant < 20:
 				return 'solar_plant'
@@ -119,8 +129,6 @@ class Planet:
 		step = self.get_next_most_efficient_step()
 		if step == 'astrophysics':
 			cost = round(next_astrophysics_cost(self.account.astrophysics, True) + (10000 + 20000 * 1.33 + 10000 * 2))
-			self.account.points += round(
-				(next_astrophysics_cost(self.account.astrophysics, True) + (10000 + 20000 * 1.33 + 10000 * 2)) / 1000)
 			if self.account.astrophysics == 0:
 				self.account.astrophysics += 1
 			else:
@@ -150,6 +158,8 @@ class Planet:
 			self.account.energy += 1
 		elif step == 'satellites':
 			cost = round((2000 * 1.33 + 500 * 2) * 50)
+			# adding defense cost equal to the satellites prices
+			cost *= 2
 			self.satellites += 50
 		else:
 			print('Unknown step: ' + step + ' !')
@@ -157,8 +167,20 @@ class Planet:
 		
 		self.account.resources -= cost
 		self.account.points += round(cost / 1000)
-		if step == 'energy' or step == 'satellites' or step == 'fusion_reactor':
+		if step == 'metal' or step == 'crystal' or step == 'deuterium':
+			self.account.mine_points += round(cost / 1000)
+		if step == 'energy':
 			self.account.energy_points += round(cost / 1000)
+		if step == 'fusion_reactor':
+			self.account.fusion_reactor_points += round(cost / 1000)
+		if step == 'solar_plant':
+			self.account.solar_plant_points += round(cost / 1000)
+		if step == 'satellites':
+			self.account.defense_points += round(cost / 2)
+		if step == 'astrophysics':
+			self.account.astrophysics_points += round(cost / 1000)
+		if step == 'plasma':
+			self.account.plasma_points += round(cost / 1000)
 		self.account.update_energy()
 	
 	

@@ -6,6 +6,8 @@ class Renderer:
 	
 	def display_scenario(self, scenario):
 		
+		print('Rendering started...')
+		
 		sources = []
 		
 		for account in scenario.accounts:
@@ -108,3 +110,4 @@ class Renderer:
 			i += 1
 
 		show(p)
+		print('Done.')

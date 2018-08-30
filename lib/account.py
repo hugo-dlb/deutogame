@@ -10,7 +10,13 @@ class Account:
 		self.energy = 0
 		self.plasma = 0
 		self.points = 0
+		self.astrophysics_points = 0
+		self.defense_points = 0
+		self.plasma_points = 0
+		self.mine_points = 0
 		self.energy_points = 0
+		self.fusion_reactor_points = 0
+		self.solar_plant_points = 0
 		self.resources = 0
 		self.planets = planets.copy()
 		self.playstyle = playstyle
@@ -51,7 +57,7 @@ class Account:
 		elif code == 'total':
 			return metal_average_production + crystal_average_production * 1.33 + deuterium_average_production * 2
 	
-	def print_total_production(self, metalized=False):
+	def get_total_production(self, metalized=False):
 		metal_production = 0
 		crystal_production = 0
 		deuterium_production = 0
@@ -66,11 +72,9 @@ class Account:
 		deuterium_average_production = round(deuterium_production / len(self.planets), 2)
 		
 		if metalized:
-			print('Production per hour metalized: ' + '{:,}'.format(round(metal_average_production + crystal_average_production + deuterium_average_production)).replace(',', ' ') + 'M')
+			return round(metal_average_production + crystal_average_production + deuterium_average_production)
 		else:
-			print('Metal production per hour: ' + '{:,}'.format(round(metal_average_production)).replace(',', ' ') + 'M')
-			print('Crystal production per hour: ' + '{:,}'.format(round(crystal_average_production)).replace(',', ' ') + 'C')
-			print('Deuterium production per hour: ' + '{:,}'.format(round(deuterium_average_production)).replace(',', ' ') + 'D')
+			return round(metal_average_production), round(crystal_average_production), round(deuterium_average_production)
 	
 	
 	def get_average_level(self, code):

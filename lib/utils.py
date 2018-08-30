@@ -3,8 +3,6 @@ from math import floor
 
 
 def get_planet_temperature_by_position(position):
-	# returning the average temperature for positions <= 8
-	# returning the minimum temperature for positions >= 9
 	if position == 1:
 		return 240
 	elif position == 2:
@@ -32,9 +30,9 @@ def get_planet_temperature_by_position(position):
 	elif position == 13:
 		return -50
 	elif position == 14:
-		return -90
+		return -80
 	elif position == 15:
-		return -130
+		return -125
 
 
 def next_level_cost(code, level, metalized=False):
@@ -123,14 +121,14 @@ def next_level_profitability_metalized(planet, code):
 				production(planet, code, planet.deuterium + 1, planet.temperature, True) - production(planet, code, planet.deuterium,
 			planet.temperature, True))
 	if code == 'plasma':
-		p2 = deepcopy(planet)
-		p2_account = deepcopy(planet.account)
-		p2.account = p2_account
-		p2.account.plasma += 1
 		production_p1_metalized = production(planet, 'metal', planet.metal, planet.temperature, True) + production(planet, 'crystal',
 			planet.crystal, planet.temperature, True) + production(planet, 'deuterium', planet.deuterium, planet.temperature, True)
-		production_p2_metalized = production(p2, 'metal', p2.metal, p2.temperature, True) + production(p2, 'crystal', p2.crystal,
-			p2.temperature, True) + production(p2, 'deuterium', p2.deuterium, p2.temperature, True)
+		planet.account.plasma += 1
+		
+		production_p2_metalized = production(planet, 'metal', planet.metal, planet.temperature, True) + production(planet, 'crystal', planet.crystal,
+			planet.temperature, True) + production(planet, 'deuterium', planet.deuterium, planet.temperature, True)
+		planet.account.plasma -= 1
+		
 		plasma_cost = next_level_cost('plasma', planet.account.plasma, True)
 		return plasma_cost / (production_p2_metalized - production_p1_metalized)
 
